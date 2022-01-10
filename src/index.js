@@ -6,7 +6,7 @@ import List from './components/list/List';
 import Detail from './components/detail/detail';
 import './index.css';
 import NotFound from './components/notfound/NotFound';
-import ParticlesBg from './components/common/Particles';
+// import ParticlesBg from './components/common/Particles';
 
 const App = () => {
     return (
