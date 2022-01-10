@@ -1,5 +1,7 @@
 .Table-container {
     overflow-x: auto; /* Needed for table to be responsive */
+    position: relative;
+    opacity: 80%;
   }
   
   .Table {
@@ -43,3 +45,9 @@
     margin-right: 6px;
   }
   
+  .Table-image {
+    height: 24px;
+    width: 24px;
+    margin-left: 15px;
+    position: absolute;
+  }

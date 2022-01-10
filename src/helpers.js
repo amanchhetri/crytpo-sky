@@ -1,18 +1,6 @@
 import React from 'react';
 
 /**
- *  Fetch error helper
- * 
- * @param {object} response
- */
-
-export const handleResponse = (response) => {
-    return response.json().then(json => {
-        return response.ok ? json : Promise.reject(json);
-    });
-}
-
-/**
  * Render change percent helper
  * 
  * @param {string} percent 
@@ -20,11 +8,15 @@ export const handleResponse = (response) => {
 
 
 export const renderPercentChange = (percent) => {
-    if(percent < 0){
-        return <span className='percent-raised'>{percent}%</span>
-    } else if(percent > 0){
-        return <span className='percent-fallen'>{percent}%</span>
+    if(percent > 0){
+        return <span className='percent-raised'>+{Math.round(percent * 100) / 100}%</span>
+    } else if(percent < 0){
+        return <span className='percent-fallen'>{Math.round(percent * 100) / 100}%</span>
     } else{
         return <span>{percent}</span>
     }
+}
+
+export const numberWithCommas = (x) => {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }

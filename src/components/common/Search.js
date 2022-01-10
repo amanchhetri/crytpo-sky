@@ -1,107 +1,91 @@
 import React from 'react';
 import { withRouter } from 'react-router-dom';
-import { API_URL } from '../../config';
-import { handleResponse } from '../../helpers';
+import axios from 'axios';
 import './Search.css';
-import Loading from './Loading';
 
 class Search extends React.Component {
-
-    state = {
-        searchResults: [],
-        searchQuery: '',
-        loading: false
-    }
-
-    handleChange = (event) => {
-        const searchQuery = event.target.value;
-
-        this.setState({searchQuery });
-
-        // If searchQuery isn't present, don't send request to server
-        if (!searchQuery){
-            return '';
-        }
-
-        this.setState({ loading: true });
-
-        fetch(`${API_URL}/autocomplete?searchQuery=${searchQuery}`)
-        .then(handleResponse)
-        .then((result) => {
-            this.setState({ 
-                loading: false,
-                searchResults: result
-             });
-        });
-    }
-
-    handleRedirect = (currencyId) => {
-        // Clear input value and close autocomplete container
-        // By clearing searchQuery state
-        this.setState({
+    constructor(props) {
+        super(props);
+        this.state = {
             searchQuery: '',
-            searchResults: []
+            coins: [],
+            filteredCoins: [],
+        }
+    }
+
+    componentDidMount(){
+        axios.get(`https://api.coingecko.com/api/v3/coins/list`)
+            .then(response => {
+                this.setState({ coins: response.data })
+            });
+    }
+
+    handleChange = (e) => {
+        this.setState({searchQuery: e.target.value});
+
+        // const filteredCoins = this.state.coins.filter(coin => {
+        //     return coin.name.toLowerCase().includes(e.target.value.toLowerCase())
+        // });
+
+        const filteredCoins = this.state.coins.filter(coin => {
+            if(e.target.value.length) {
+                const xyz = coin.name.substring(0, e.target.value.length);
+                if(xyz.toLowerCase() === e.target.value.toLowerCase()) return true;
+                return false;
+            } else {
+                return false;
+            }
         })
 
-        this.props.history.push(`/currency/${currencyId}`);
+        this.setState({ filteredCoins });
+    }
+
+    handleRedirect =  (currencyId) => {
+        this.setState({
+            searchQuery: '',
+            filteredCoins: []
+        })
+
+        this.props.history.push(`/coin/${currencyId}`);
     }
 
     renderSearchResults() {
-        const { searchResults, searchQuery, loading } = this.state;
+        const { filteredCoins, searchQuery } = this.state;
 
         if(!searchQuery){
             return '';        
         }
 
-        if (searchResults.length > 0) {
+        if (filteredCoins.length > 0) {
             return(
                 <div className='Search-result-container'>
-                    {searchResults.map(result => (
+                    {filteredCoins.map(result => (
                         <div 
                             key={result.id}
                             className='Search-result'
                             onClick = {() => this.handleRedirect(result.id)}>
-                                {result.name} ({result.symbol})
+                                {result.name} ({result.symbol.toUpperCase()})
                         </div>
                     ))}
                 </div>
             ) 
         }
-
-        if(!loading){
-            return (
-                <div className='Search-result-container'>
-                    <div className='Search-no-result'>
-                        No results found.
-                    </div>
-                </div>
-            )
-        }
     }
 
-    render(){
-        const { loading, searchQuery } = this.state;
+    render() {
+        const { searchQuery } = this.state;
 
-        return(
+        return (
             <div className='Search'>
                 <span className='Search-icon' />
 
                 <input
                     className='Search-input'
                     type='text'
-                    placeholder='Currency Name' 
+                    placeholder='Search' 
                     onChange={this.handleChange}
                     value={searchQuery} 
                 />
-
-                {loading &&
-                     <div className='Search-loading'>
-                        <Loading 
-                        width='12px'
-                        height='12px'
-                        />
-                    </div>
-                }
 
                 {this.renderSearchResults()}
                

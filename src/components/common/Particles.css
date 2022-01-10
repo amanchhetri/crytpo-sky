@@ -1,0 +1,17 @@
+.App-particles__container {
+    overflow: hidden;
+    position: absolute;
+    z-index: -1;
+  }
+  
+  .App-particles__container canvas {
+    transition: 0.2s all ease-in-out;
+    z-index: 0;
+    height: 100%;
+    width: 100%;
+    position: fixed;
+    background-image: url('');
+    background-size: cover;
+    background-position: 50% 50%;
+    background-repeat: no-repeat;
+  }

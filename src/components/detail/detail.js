@@ -1,15 +1,18 @@
 import React from 'react';
-import { API_URL} from '../../config';
-import { handleResponse, renderPercentChange } from '../../helpers';
+import { renderPercentChange } from '../../helpers';
+import axios from 'axios';
 import Loading from '../common/Loading';
 import './detail.css';
+import Chart from './Chart';
 
 class Detail extends React.Component{
 
-    state = {
-        currency: {},
-        loading: false,
-        error: null
+    constructor(props) {
+        super(props);
+        this.state = {
+            currency: {},
+            loading: false,
+        }
     }
 
     componentDidMount() {
@@ -27,75 +30,83 @@ class Detail extends React.Component{
         }
     }
 
-    fetchCurrency(currencyId){
+    
+
+    fetchCurrency(currencyId) {
         this.setState({ loading: true });
 
-        fetch(`${API_URL}/cryptocurrencies/${currencyId}`)
-        .then(handleResponse)
-        .then((currency) => {
-            this.setState({
-                loading: false,
-                error: null,
-                currency: currency
+        axios.get(`https://api.coingecko.com/api/v3/coins/${currencyId}`)
+            .then(response => {
+                this.setState({ loading: false, currency: response.data });
             })
-        })
-        .catch((error) => {
-            this.setState({
-                loading: false,
-                error: error.errorMessage
-            })
-        });
     }
 
     render(){
-        const { loading, error, currency } = this.state;
-
+        const { loading, currency } = this.state;
+        
         // render only loading component if loading state is set to true.
         if (loading) {
-            return <div className='Loading-container'><Loading /></div>
+            return <div className='Loading-container text-center mt-3'><Loading /></div>
         }
 
-        // render only error message, if error occured while fetching data.
-        if (error) {
-            return <div className='error'>{error}</div>
-        }
+        if(currency.symbol) {
+            return(
+                <div className='container-fluid'>
+                    <div className='row'>
+                        <div className='col-4'>
+                            <div className='Detail'>
+                                <h1 className='Detail-heading'>
+                                    {currency.name} ({currency.symbol.toUpperCase()})
+                                </h1>
+                
+                                <div className='Detail-container'>
+                                    <div className='Detail-item'>
+                                        Price <span className='Detail-value'>$ {currency.market_data.current_price.usd}</span>
+                                    </div>
+                                    <div className='Detail-item'>
+                                        Rank <span className='Detail-value'>{currency.market_cap_rank}</span>
+                                    </div>
+                                    <div className='Detail-item'>
+                                        24H Change 
+                                        <span className='Detail-value'>
+                                            {renderPercentChange(currency.market_data.price_change_24h)}
+                                        </span>
+                                    </div>
+                                    <div className='Detail-item'>
+                                        <span className='Detail-title'>Market Cap</span> 
+                                        <span className='Detail-dollar'>$</span>
+                                        {currency.market_data.market_cap.usd} 
+                                    </div>
+                                    <div className='Detail-item'>
+                                        <span className='Detail-title'>Circulating Supply</span>
+                                        {Math.round(currency.market_data.circulating_supply * 100) / 100}
+                                    </div>
+                                    <div className='Detail-item'>
+                                        <span className='Detail-title'>24H Volume</span> 
+                                        <span className='Detail-dollar'>$</span>
+                                        {currency.volume24h} 
+                                    </div>
+                                    <div className='Detail-item'>
+                                        <span className='Detail-title'>Total Supply</span> 
+                                        {currency.market_data.total_supply} 
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
-        return(
-            <div className='Detail'>
-                <h1 className='Detail-heading'>
-                    {currency.name} ({currency.symbol})
-                </h1>
-
-                <div className='Detail-container'>
-                    <div className='Detail-item'>
-                        Price <span className='Detail-value'>$ {currency.price}</span>
+                        <div className='col-8'>
+                            <Chart coinId={currency.id}/>
+                        </div>
                     </div>
-                    <div className='Detail-item'>
-                        Rank <span className='Detail-value'>{currency.rank}</span>
-                    </div>
-                    <div className='Detail-item'>
-                        24H Change 
-                        <span className='Detail-value'>
-                            {renderPercentChange(currency.percentChange24h)}
-                        </span>
-                    </div>
-                    <div className='Detail-item'>
-                        <span className='Detail-title'>Market Cap</span> 
-                        <span className='Detail-dollar'>$</span>
-                        {currency.marketCap} 
-                    </div>
-                    <div className='Detail-item'>
-                        <span className='Detail-title'>24H Volume</span> 
-                        <span className='Detail-dollar'>$</span>
-                        {currency.volume24h} 
-                    </div>
-                    <div className='Detail-item'>
-                        <span className='Detail-title'>Total Supply</span> 
-                        {currency.totalSupply} 
+                    <div className='row mx-5'>
+                        <h3>What is {currency.name}?</h3>
+                        <div className='Detail-description' dangerouslySetInnerHTML={{ __html: currency.description.en }} />
                     </div>
                 </div>
-            </div>
-        )
+            )
+        } else {
+            return (null)
+        }
     }
 }
 

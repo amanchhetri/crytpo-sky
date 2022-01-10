@@ -1,9 +1,9 @@
 import React from 'react';
-import { handleResponse } from '../../helpers';
-import { API_URL } from '../../config';
 import Loading from '../common/Loading';
 import Table from './Table';
 import Pagination from './Pagination';
+import axios from 'axios';
+import Carousel1 from '../common/Carousel1';
 
 class List extends React.Component {
     state = {
@@ -23,35 +23,24 @@ class List extends React.Component {
 
         const { page } = this.state;
 
-        fetch(`${API_URL}/cryptocurrencies?page=${page}&perPage=20`)
-            .then(handleResponse)
-            .then((data) => {
-
-                const { currencies, totalPages } = data;
+        axios.get(`https://api.coingecko.com/api/v3/coins/list`)
+            .then(response => {
                 this.setState({
-                    /* currencies: currencies;
-                       totalPages: totalPages;*/
-                    currencies,
-                    totalPages,
+                    totalPages: Math.ceil(response.data.length/20)
+                })
+            });
+
+        axios.get(`https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=20&page=${page}&sparkline=false`)
+            .then(response => {
+                this.setState({
+                    currencies: response.data,
                     loading: false
                 })
             })
-            .catch((error) => {
-                this.setState({
-                    error: error.errorMessage,
-                    loading: false
-                })
-            });
     }
 
     handlePaginationClick = (direction) => {
         let nextPage = this.state.page;
-
-        /* if (direction === 'next') {
-            nextPage++;
-        } else {
-            nextPage--;
-        } */
 
         // Increment nextPage if direction variable is next, otherwise decrement
         nextPage = direction === 'next' ? nextPage + 1 : nextPage - 1;
@@ -66,24 +55,20 @@ class List extends React.Component {
     render() {
         const {loading, error, currencies, page, totalPages} = this.state;
 
-        /**
-         * const loading = this.state.loading;
-         * const error = this.state.error;
-         * const currencies = this.state.currencies;
-         */
+        console.log('asdf', totalPages)
 
-        //render only loading component, if loading state is set to true
         if (loading) {
             return <div className='loading-container'><Loading /></div>
         }
 
-        //render only error message, if error occured while fetching data 
         if(error) {
             return <div className='error'>{error}</div>
         }
 
         return(
             <div>
+                <Carousel1 />
+                <h2 className='text-center m-5'>Today's Cryptocurrency Prices by Market Cap</h2>
                 <Table 
                     currencies={currencies}
                 />
@@ -93,7 +78,6 @@ class List extends React.Component {
                     handlePaginationClick={this.handlePaginationClick}
                 />
             </div>
-            
         );
     }
 }

@@ -6,25 +6,25 @@ import List from './components/list/List';
 import Detail from './components/detail/detail';
 import './index.css';
 import NotFound from './components/notfound/NotFound';
+import ParticlesBg from './components/common/Particles';
 
 const App = () => {
     return (
         <BrowserRouter>
             <div>
+                <ParticlesBg />
                 <Header />
-
                 <Switch>
                     <Route path="/" component={List} exact />
-                    <Route path="/currency/:id" component={Detail} exact />
+                    <Route path="/coin/:id" component={Detail} exact />
                     <Route component={NotFound} />
                 </Switch>
             </div>
-            
-        </BrowserRouter>   
+        </BrowserRouter>
     );
 }
 
 ReactDOM.render(
-    <App/>,
+    <App />,
     document.getElementById('root')
 );

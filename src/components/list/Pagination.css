@@ -1,6 +1,9 @@
 .Pagination {
-    margin: 50px auto;
+    margin: 0 auto;
     text-align: center;
+    position: relative;
+    padding: 20px 0;
+    background-color: #0c2033;
   }
   
   .Pagination-button {
