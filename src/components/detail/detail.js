@@ -82,11 +82,6 @@ class Detail extends React.Component{
                                         {Math.round(currency.market_data.circulating_supply * 100) / 100}
                                     </div>
                                     <div className='Detail-item'>
-                                        <span className='Detail-title'>24H Volume</span> 
-                                        <span className='Detail-dollar'>$</span>
-                                        {currency.volume24h} 
-                                    </div>
-                                    <div className='Detail-item'>
                                         <span className='Detail-title'>Total Supply</span> 
                                         {currency.market_data.total_supply} 
                                     </div>

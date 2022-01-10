@@ -12,7 +12,7 @@ const App = () => {
     return (
         <BrowserRouter>
             <div>
-                <ParticlesBg />
+                {/* <ParticlesBg /> */}
                 <Header />
                 <Switch>
                     <Route path="/" component={List} exact />
