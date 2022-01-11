@@ -1,18 +1,18 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import { HashRouter, Route, Switch } from 'react-router-dom';
 import Header from './components/common/Header';
 import List from './components/list/List';
 import Detail from './components/detail/detail';
 import './index.css';
 import NotFound from './components/notfound/NotFound';
-// import ParticlesBg from './components/common/Particles';
+import ParticlesBg from './components/common/Particles';
 
 const App = () => {
     return (
-        <BrowserRouter>
+        <HashRouter>
             <div>
-                {/* <ParticlesBg /> */}
+                <ParticlesBg />
                 <Header />
                 <Switch>
                     <Route path="/" component={List} exact />
@@ -20,7 +20,7 @@ const App = () => {
                     <Route component={NotFound} />
                 </Switch>
             </div>
-        </BrowserRouter>
+        </HashRouter>
     );
 }
 
