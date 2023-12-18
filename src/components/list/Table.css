@@ -1,7 +1,7 @@
 .Table-container {
     overflow-x: auto; /* Needed for table to be responsive */
     position: relative;
-    opacity: 80%;
+    opacity: 1;
   }
   
   .Table {
